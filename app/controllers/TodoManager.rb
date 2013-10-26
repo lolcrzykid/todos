@@ -20,29 +20,33 @@ class TodoManager
         delete
       when "list"
         list
+      when "complete"
+        complete
     end
   end
 
   def add
-    Task.create(todo_text: @user_input.join(" "))
+    Task.create(todo_text: @user_input.join(" "))#, completedness: false)
   end
 
   def delete
     id = @user_input.join.to_i
-    # if Task.exists?(id)
-      Task.destroy(id)
-    # else
-    #   raise "That task id does not exist"
-    # end
+    Task.destroy(id)
   rescue ActiveRecord::RecordNotFound => e
-    puts "exception rescued"
-    p e.message  
+    puts "That task id does not exist"
   end
 
   def list
     Task.all.each do |task| 
-      puts "#{task.id}: #{task.todo_text}"
+      puts "#{task.id}: #{task.todo_text} complete: #{task.completedness}"
     end
+  end
+
+  def complete
+    id = @user_input.join.to_i
+    task = Task.find(id)
+    task.completedness = true
+    task.save
   end
 
 end
